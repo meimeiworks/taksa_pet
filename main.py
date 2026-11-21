@@ -15,9 +15,8 @@ class TaksaPetApp(QWidget):
 
   def __init__(self):
     super().__init__()
-    self.setWindowFlags(
-        Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool
-    )
+    # Убрали Qt.Tool, чтобы окно не пряталось после закрытия диалогов
+    self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
     self.setAttribute(Qt.WA_TranslucentBackground)
     self.resize(330, 265)
 
@@ -105,9 +104,7 @@ class TaksaPetApp(QWidget):
       self.btn.setText("Кто там?")
 
     elif self.step == 3:
-      # Эффектное появление МейМей!
       self.meimei_here = True
-      self.update()
       self.say(
           f"Мурр! Я снежный барс МейМей! Теперь я тоже твой лучший друг, {self.player_name}!"
       )
@@ -135,7 +132,6 @@ class TaksaPetApp(QWidget):
         self.say(
             f"Ничего страшного... Скоро {self.best_friend} тоже с нами познакомится."
         )
-      self.update()
 
     else:
       lines = [
@@ -145,6 +141,12 @@ class TaksaPetApp(QWidget):
           "МейМей мурлычет, а Такса виляет хвостом!",
       ]
       self.say(random.choice(lines))
+
+    # Гарантированно возвращаем окно поверх рабочего стола
+    self.show()
+    self.raise_()
+    self.activateWindow()
+    self.update()
 
   def mousePressEvent(self, e):
     if e.button() == Qt.LeftButton:
@@ -164,7 +166,7 @@ class TaksaPetApp(QWidget):
     qp.setRenderHint(QPainter.Antialiasing)
     qp.setPen(Qt.NoPen)
 
-    # --- СНЕЖНЫЙ БАРС МЕЙМЕЙ (появляется на 3-м шаге!) ---
+    # --- СНЕЖНЫЙ БАРС МЕЙМЕЙ ---
     if self.meimei_here:
       qp.setBrush(QColor("#E8ECF2"))
       qp.drawPolygon(QPolygon([QPoint(55, 125), QPoint(65, 95), QPoint(85, 115)]))
@@ -188,7 +190,7 @@ class TaksaPetApp(QWidget):
         qp.drawRect(82, 144, 14, 3)
         qp.drawRect(114, 144, 14, 3)
 
-    # --- ТАКСА (всегда на экране, в начале по центру, потом сдвигается вправо) ---
+    # --- ТАКСА ---
     tx = 165 if self.meimei_here else 105
     qp.setBrush(QColor("#8B4513"))
     qp.drawRoundedRect(tx, 178, 95, 34, 14, 14)
